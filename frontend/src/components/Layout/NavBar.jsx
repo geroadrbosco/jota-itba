@@ -95,6 +95,16 @@ const NavBar = () => {
                         </li>
                         <li className="nav-item">
                             <NavLink
+                                to="/register"
+                                className={({ isActive }) =>
+                                    `nav-link bg-white rounded-3 px-3 py-2 ${isActive ? 'active fw-bold' : ''}`
+                                }
+                            >
+                                Register
+                            </NavLink>
+                        </li>
+                        <li className="nav-item">
+                            <NavLink
                                 to="/admin/crear-producto"
                                 className={({ isActive }) =>
                                     `nav-link bg-white rounded-3 px-3 py-2 ${isActive ? 'active fw-bold' : ''}`

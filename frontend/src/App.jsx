@@ -7,7 +7,7 @@ import { Footer } from "./components/Layout/Footer"
 export const App = () => {
   const location = useLocation();
   
-  const hideNavbarPaths = ['/register'];
+  const hideNavbarPaths = [];
   const shouldShowNavbar = !hideNavbarPaths.includes(location.pathname);
 
   return (
