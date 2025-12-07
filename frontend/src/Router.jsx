@@ -1,4 +1,3 @@
-// src/Router.jsx
 import { createBrowserRouter } from "react-router-dom";
 import { App } from "./App";
 import { ProtectedRoute } from "./security/ProtectedRouter";
@@ -12,6 +11,7 @@ import { NotFound } from "./pages/NotFound";
 import { ProductsList } from "./pages/ProductsList";
 import { Register } from "./pages/Register";
 import { ProductDetail } from "./pages/ProductDetail";
+import { Profile } from "./pages/profile";
 
 export const Router = createBrowserRouter([
   {
@@ -31,6 +31,13 @@ export const Router = createBrowserRouter([
       { path: "/login", element: <Login /> },
       { path: "/register", element: <Register /> },
       { path: "*", element: <NotFound /> },
+      { 
+        path: "/profile", 
+        element: (
+        <ProtectedRoute>
+        <Profile/>
+        </ProtectedRoute>)},
+
       {
         path: "admin/crear-producto",
         element: (

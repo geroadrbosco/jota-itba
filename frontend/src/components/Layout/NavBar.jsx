@@ -149,7 +149,7 @@ const NavBar = () => {
                         </div>
                         {isAuthenticated && (
                             <NavLink
-                                to="/perfil"
+                                to="/profile"
                                 className={({ isActive }) =>
                                     `text-decoration-none d-block ${isActive ? 'bg-light' : ''}`
                                 }

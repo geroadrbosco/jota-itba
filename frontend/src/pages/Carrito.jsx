@@ -1,5 +1,3 @@
-// src/pages/Carrito.jsx
-
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../contexts/CartContext';
@@ -37,7 +35,7 @@ export const Carrito = () => {
       return;
     }
     if (!isAuthenticated) {
-      toast.warn('Debes iniciar seasión para la compra');
+      toast.warn('Debes iniciar sesión para la compra');
     } else {
       clearCart();
       toast.success('¡Gracias por tu compra! 🎉');

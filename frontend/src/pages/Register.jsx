@@ -29,11 +29,10 @@ const handleChange = (e) => {
     };
 
     return (
-        <div className="container" style={{ paddingTop: '100px', minHeight: '100vh'}}>
-    
-            <h2>Crear cuenta</h2>
-            <form onSubmit={handleSubmit}>
-                <label htmlFor="email">Email *</label>
+        <div className="container" style={{ paddingTop: '100px', minHeight: '100vh' }}>
+            <h2 style={{ textAlign: 'center', marginBottom: '24px' }}>Crear cuenta</h2>
+            <form onSubmit={handleSubmit} style={{ maxWidth: '400px', margin: '0 auto' }}>
+                <label htmlFor="email" style={{ display: 'block', margin: '8px 0 4px' }}>Email *</label>
                 <input
                     type="email"
                     id="email"
@@ -41,8 +40,9 @@ const handleChange = (e) => {
                     value={formData.email}
                     onChange={handleChange}
                     required
+                    style={{ width: '100%', padding: '8px', marginBottom: '12px', boxSizing: 'border-box' }}
                 />
-                <label htmlFor="password">Contraseña *</label>
+                <label htmlFor="password" style={{ display: 'block', margin: '8px 0 4px' }}>Contraseña *</label>
                 <input
                     type="password"
                     id="password"
@@ -50,9 +50,10 @@ const handleChange = (e) => {
                     value={formData.password}
                     onChange={handleChange}
                     required
+                    style={{ width: '100%', padding: '8px', marginBottom: '12px', boxSizing: 'border-box' }}
                 />
-                {error && <p style={{ color: "red" }}>{error}</p>}
-                <button type="submit" disabled={isLoading}>
+                {error && <p style={{ color: "red", fontSize: '14px', textAlign: 'center' }}>{error}</p>}
+                <button type="submit" disabled={isLoading} style={{ width: '100%', padding: '10px', fontSize: '16px' }}>
                     {isLoading ? "Registrando..." : "Registrarse"}
                 </button>
             </form>
