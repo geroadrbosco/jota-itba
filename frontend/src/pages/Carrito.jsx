@@ -4,6 +4,7 @@ import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../contexts/CartContext';
 import { toast } from 'react-toastify';
+import { useAuth } from '../contexts/AuthContext';
 
 export const Carrito = () => {
   const {
@@ -11,8 +12,10 @@ export const Carrito = () => {
     removeItemFromCart,
     updateItemQuantity,
     getTotalItems,
-    getTotalPrice
+    getTotalPrice,
+    clearCart
   } = useContext(CartContext);
+  const { isAuthenticated } = useAuth()
 
   const navigate = useNavigate();
 
@@ -33,7 +36,12 @@ export const Carrito = () => {
       toast.warn('El carrito está vacío');
       return;
     }
-    toast.success('¡Gracias por tu compra! 🎉\n(Simulada por ahora)');
+    if (!isAuthenticated) {
+      toast.warn('Debes iniciar seasión para la compra');
+    } else {
+      clearCart();
+      toast.success('¡Gracias por tu compra! 🎉');
+    }
   };
 
   // Carrito vacío

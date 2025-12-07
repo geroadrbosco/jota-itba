@@ -59,11 +59,11 @@ export const AuthProvider = ({ children }) => {
       const { token, user: userData } = response.data;
 
       // Opcional: dejar al usuario logueado tras registrarse
-      if (token && userData) {
-        localStorage.setItem('access_token', token);
-        localStorage.setItem('user', JSON.stringify(userData));
-        setUser(userData);
-      }
+      //if (token && userData) {
+      //  localStorage.setItem('access_token', token);
+      //  localStorage.setItem('user', JSON.stringify(userData));
+      //  setUser(userData);
+      //}
     } catch (error) {
       const message =
         error.response?.data?.error ||

@@ -18,9 +18,9 @@ const handleChange = (e) => {
         e.preventDefault();
         setError(null);
         try {
-             await register(formData.email, formData.password);
+            await register(formData.email, formData.password);
             toast.success("Usuario registrado exitosamente");
-            navigate("/");
+            navigate("/login");
         } catch (err) {
             console.error("Error al registrar usuario", err);
             setError(err.message);
