@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getProducts } from '../services/getProducts';
+import { deleteProduct } from '../services/getProducts';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { toast } from 'react-toastify';
@@ -47,16 +48,14 @@ export const ProductDetail = () => {
     if (!window.confirm('¿Seguro que quieres eliminar este producto?')) {
       return;
     }
-
     try {
-      await api.delete(`/api/productos/${productoId}`);
+      const products = await deleteProduct(productoId);
       navigate('/productos');
-      alert("Producto eliminado exitosamente")
-
+      toast.success("Producto eliminado correctamente")
     } catch (error) {
       console.error('❌ Error:', error);
       const errorMessage = error.response?.data?.error || error.message || 'Error al eliminar';
-      alert('No se pudo eliminar el producto: ' + errorMessage);
+      toast.error("Error al eliminar", error)
     }
   };
 

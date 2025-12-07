@@ -9,4 +9,15 @@ export const getProducts = async () => {
     console.error('Error fetching products:', error);
     throw error;
   }
-};
+}
+
+  export const deleteProduct = async (productoId) => {
+    try {
+      const response = await api.delete(`api/productos/${productoId}`, getAuthHeaders());
+      return response.data;
+    } catch (error) {
+      console.error("Error", error);
+      throw error
+    }
+  }
+;
