@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getProducts } from '../services/getProducts';
 import { useNavigate } from 'react-router-dom';
-import { CartContext } from '../contexts/CartContext';
+import { useCart } from '../contexts/CartContext';
 import { toast } from 'react-toastify';
 const BACKEND_URL = import.meta.env.VITE_PUBLIC_BACKEND_URL || 'http://localhost:3001/';
 
@@ -12,7 +12,7 @@ export const ProductDetail = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-    const { addItemToCart } = useContext(CartContext)
+    const { addItemToCart } = useCart()
 
     const fetchProduct = useCallback(async () => {
         setLoading(true);
@@ -40,7 +40,7 @@ export const ProductDetail = () => {
     const agregarAlCarrito = (producto) => {
         addItemToCart(producto)
         console.log('Agregar al carrito:', producto);
-        toast.success('Producto agregado al carrito');
+        toast.success(`${producto.nombre} agregado al carrito `);
     };
 
     const handleEliminar = async (productoId) => {
@@ -50,9 +50,6 @@ export const ProductDetail = () => {
 
     try {
       await api.delete(`/api/productos/${productoId}`);
-      navigate('/productos');
-      alert("Producto eliminado exitosamente")
-
       navigate('/productos');
       alert("Producto eliminado exitosamente")
 
