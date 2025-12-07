@@ -1,9 +1,7 @@
 import axios from 'axios';
 
 // Definir la URL del backend desde variables de entorno
-const BACKEND_URL = 'http://localhost:3001';
-
-// import.meta.env.VITE_PUBLIC_BACKEND_URL || 
+const BACKEND_URL = import.meta.env.VITE_PUBLIC_BACKEND_URL || 'http://localhost:3001';
 
 // Create axios instance
 const api = axios.create({
