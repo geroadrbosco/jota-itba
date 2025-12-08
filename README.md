@@ -3,8 +3,8 @@ Integrantes: Kevin Serrano, Gerónimo Bosco, Ivanna Valle, Fernando Romero, Jeff
 
 Tecnologías Utilizadas: React, Node js, Express.js Y MongoDB
 
-Link del backend en render: https://jota-itba.onrender.com
-Link del frontend en vercel: https://jota-itba.vercel.app/
+Link del backend en render: https://jota-itba-1.onrender.com
+Link del frontend en vercel: https://jota-itba.vercel.app/ 
 
 el .env en frontend debe contener: 
 VITE_PUBLIC_BACKEND_URL=https://jota-itba.onrender.com/
