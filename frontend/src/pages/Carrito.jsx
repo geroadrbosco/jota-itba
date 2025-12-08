@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../contexts/CartContext';
 import { toast } from 'react-toastify';
 import { useAuth } from '../contexts/AuthContext';
+import { createPedido } from '../services/getProducts';
 
 export const Carrito = () => {
   const {
@@ -36,10 +37,17 @@ export const Carrito = () => {
     }
     if (!isAuthenticated) {
       toast.warn('Debes iniciar sesión para la compra');
-    } else {
-      clearCart();
-      toast.success('¡Gracias por tu compra! 🎉');
+      return;
     }
+    const pedidoData = {
+      items: cartItems.map(item => ({
+        _id: item._id,
+        cantidad: item.quantity
+    }))}
+    createPedido(pedidoData);
+    clearCart();
+    toast.success('¡Gracias por tu compra! 🎉');
+    navigate("/pedidos");
   };
 
   // Carrito vacío
