@@ -11,7 +11,7 @@ import { NotFound } from "./pages/NotFound";
 import { ProductsList } from "./pages/ProductsList";
 import { Register } from "./pages/Register";
 import { ProductDetail } from "./pages/ProductDetail";
-import { Profile } from "./pages/profile";
+import { Profile } from "./pages/Profile";
 import { Pedidos } from "./pages/Pedidos";
 
 export const Router = createBrowserRouter([
