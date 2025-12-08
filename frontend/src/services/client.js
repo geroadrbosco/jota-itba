@@ -11,35 +11,28 @@ const api = axios.create({
 // Helper function to get current tokens
 const getAuthHeaders = (contentType = 'application/json') => {
   const token = localStorage.getItem('access_token');
-  return {headers: {
-    Authorization: `Bearer ${token}`,
+  const headers = {
     'Content-Type': contentType,
-    'Time-Zone-Offset': new Date().getTimezoneOffset()
-  }};
+    'Time-Zone-Offset': new Date().getTimezoneOffset(),
+  };
+
+ if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  return { headers };
 };
 
-// Request interceptor
-api.interceptors.request.use(
+// Request interceptor: añadir siempre el access token si existe
+  api.interceptors.request.use(
   (config) => {
-    // Skip modification for special requests
-    if (config._skipAuth || config.url?.includes('/token')) {
-      return config;
-    }
-
-    // Handle refresh token requests differently
-    if (config.url?.includes('/refresh')) {
-      const refreshToken = localStorage.getItem('refresh_token');
-      if (refreshToken) {
-        config.headers.Authorization = `Bearer ${refreshToken}`;
-      }
-      return config;
-    }
-
-    // Default case: add access token
-    // const accessToken = localStorage.getItem('access_token');
-    // if (accessToken && !config.headers.Authorization) {
-    //   config.headers.Authorization = `Bearer ${accessToken}`;
-    // }
+     const token = localStorage.getItem('access_token');
+    if (token && !config.headers?.Authorization) {
+      config.headers = {
+        ...(config.headers || {}),
+        Authorization: `Bearer ${token}`,
+      };
+    }  
     return config;
   },
   (error) => Promise.reject(error)
@@ -49,45 +42,15 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config;
-
-    const authEndpoints = ['/user/token', '/user/refresh'];
-    const isAuthEndpoint = authEndpoints.includes(originalRequest.url);
-    
-    // If 401 error and not a retry attempt
-    if (error.response?.status === 401 && !originalRequest._retry && !isAuthEndpoint) {
-      originalRequest._retry = true;
+    // Si recibimos un 401 (no autorizado), limpiar tokens y redirigir a login
+    if (error.response?.status === 401) {
+      // No hacer nada si ya estamos en login o register para evitar loops
+      const isAuthPage = window.location.pathname === '/login' || window.location.pathname === '/register';
       
-      try {
-        const refreshToken = localStorage.getItem('refresh_token');
-        if (!refreshToken) throw new Error('No refresh token');
-        
-        // Refresh tokens (bypassing our interceptor to avoid infinite loop)
-        const response = await axios.post(
-          `${BACKEND_URL}/user/refresh`,
-          {}, // Empty body
-          {
-            headers: {
-              'Authorization': `Bearer ${refreshToken}`,
-              'Content-Type': 'application/json'
-            },
-            _isRefreshRequest: true // Flag to skip interceptor
-          }
-        );
-        
-        // Store new tokens
-        localStorage.setItem('access_token', response.data.access_token);
-        localStorage.setItem('refresh_token', response.data.refresh_token);
-        
-        // Retry original request with new token
-        originalRequest.headers.Authorization = `Bearer ${response.data.access_token}`;
-        return api(originalRequest);
-      } catch (refreshError) {
-        // Clear tokens and redirect to login
+      if (!isAuthPage) {
         localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('user');
         window.location.href = '/login';
-        return Promise.reject(refreshError);
       }
     }
     

@@ -1,7 +1,10 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getProducts } from '../../services/getProducts';
+import { getProducts } from '../services/getProducts';
+import { deleteProduct } from '../services/getProducts';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from '../contexts/CartContext';
+import { toast } from 'react-toastify';
 const BACKEND_URL = import.meta.env.VITE_PUBLIC_BACKEND_URL || 'http://localhost:3001/';
 
 export const ProductDetail = () => {
@@ -10,6 +13,7 @@ export const ProductDetail = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+    const { addItemToCart } = useCart()
 
     const fetchProduct = useCallback(async () => {
         setLoading(true);
@@ -35,32 +39,23 @@ export const ProductDetail = () => {
     }, [fetchProduct]);
 
     const agregarAlCarrito = (producto) => {
-        // Implementar funcionalidad del carrito
+        addItemToCart(producto)
         console.log('Agregar al carrito:', producto);
-        alert(`${producto.nombre} agregado al carrito`);
+        toast.success(`${producto.nombre} agregado al carrito `);
     };
 
     const handleEliminar = async (productoId) => {
     if (!window.confirm('¿Seguro que quieres eliminar este producto?')) {
       return;
     }
-
     try {
-      const response = await fetch(`${BACKEND_URL}api/productos/${productoId}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Error al eliminar');
-      }
-
+      const products = await deleteProduct(productoId);
       navigate('/productos');
-      alert("Producto eliminado exitosamente")
-
+      toast.success("Producto eliminado correctamente")
     } catch (error) {
       console.error('❌ Error:', error);
-      alert('No se pudo eliminar el producto: ' + error.message);
+      const errorMessage = error.response?.data?.error || error.message || 'Error al eliminar';
+      toast.error("Error al eliminar", error)
     }
   };
 

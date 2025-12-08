@@ -1,11 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const productoController = require("../controllers/producto.controller.js");
+const { authenticateToken } = require("../middleware/auth.middleware");
 
-router.post("/", productoController.createProducto);
+// Rutas públicas
 router.get("/", productoController.getProductos);
 router.get("/:id", productoController.getProductoById);
-router.put("/:id", productoController.updateProducto);
-router.delete("/:id", productoController.deleteProducto);
+
+// Rutas protegidas (requieren autenticación)
+router.post("/", authenticateToken, productoController.createProducto);
+router.put("/:id", authenticateToken, productoController.updateProducto);
+router.delete("/:id", authenticateToken, productoController.deleteProducto);
 
 module.exports = router;

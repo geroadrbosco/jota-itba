@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-const BACKEND_URL = import.meta.env.VITE_PUBLIC_BACKEND_URL || 'http://localhost:3001/';
+import { api } from '../services/client';
 
 export function CrearProducto() {
   const navigate = useNavigate();
@@ -30,34 +30,24 @@ export function CrearProducto() {
     const datosParaEnviar = {
       ...formData
     };
-    console.log('BACKEND_URL:', BACKEND_URL);
+
     try {
-      const response = await fetch(`${BACKEND_URL}api/productos`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(datosParaEnviar),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Error al crear el producto');
-      }
-
-      const productoCreado = await response.json();
+       const response = await api.post('/api/productos', datosParaEnviar);
+      const productoCreado = response.data;
       console.log('✅ Producto creado:', productoCreado);
 
       alert("Producto creado exitosamente")
       navigate(`/productos`);
     } catch (error) {
       console.error('❌ Error:', error);
-      alert('Error: ' + error.message);
+      const errorMessage = error.response?.data?.error || error.message || 'Error al crear el producto';
+      alert('Error: ' + errorMessage);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-lg mx-auto p-6 bg-white rounded shadow">
+    <div className="container" style={{ paddingTop: '100px', minHeight: '100vh'}}>
+    <form onSubmit={handleSubmit} className="max-w-lg mx-auto p-6 bg-[#ee6130]">
       <h2 className="text-xl font-bold mb-4">Crear nuevo producto</h2>
 
       <div className="mb-3">
@@ -163,5 +153,6 @@ export function CrearProducto() {
         Crear Producto
       </button>
     </form>
+    </div>
   );
 }

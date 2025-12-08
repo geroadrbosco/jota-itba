@@ -1,69 +1,99 @@
-/* eslint-disable react-refresh/only-export-components */
-import { createContext, useReducer,useContext } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { createContext, useContext, useState, useEffect } from 'react';
+import { api } from '../services/client';
 
-const AuthContext = createContext({
-    state: {},
-    actions: {},
-});
+const AuthContext = createContext();
 
-const ACTIONS = {
-    LOGIN: 'LOGIN',
-    LOGOUT: 'LOGOUT',
-}
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth debe usarse dentro de un AuthProvider');
+  }
+  return context;
+};
 
-function reducer(state, action) {
-    switch(action.type) {
-        case ACTIONS.LOGIN:
-            return {
-                ...state,
-                token: action.payload,
-                isAuthenticated: true,
-            };
-        case ACTIONS.LOGOUT:
-            return {
-                isAuthenticated: false,
-            };
-        default:
-            return state;
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Cargar usuario desde localStorage al iniciar
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        localStorage.removeItem('user');
+        localStorage.removeItem('access_token');
+      }
     }
-}
+    setIsLoading(false);
+  }, []);
 
-function AuthProvider({ children }) { // Colocar componentes dentro
-    const [state, dispatch] = useReducer(reducer,{
-        token: localStorage.getItem('authToken'),
-        isAuthenticated: localStorage.getItem('authToken') ? true : false,
-    });
+  const login = async (email, password) => {
+    setIsLoading(true);
+    try {
+      const response = await api.post('/api/auth/login', { email, password });
+      const { token, user: userData } = response.data;
+    
 
-    const navigate = useNavigate();
-    const location = useLocation();
-
-    const actions = {
-        login: (token) => {
-            dispatch({ type: ACTIONS.LOGIN, payload: token });
-            localStorage.setItem('authToken', token);
-            const origin = location.state?.from?.pathname || "/"; 
-            navigate(origin);
-        },
-        logout: () => {
-            dispatch({ type: ACTIONS.LOGOUT });
-            localStorage.removeItem('authToken');
-        }
-    };
-
-    return (
-        <AuthContext.Provider value={{state, actions}}>
-            {children}
-        </AuthContext.Provider>
-    )
-}
-
-function useAuth(type) {
-    const context = useContext(AuthContext);
-    if (context === undefined) {
-        throw new Error('useAuth must be used within an AuthProvider');
+      // Guardar token y usuario
+      localStorage.setItem('access_token', token);
+      localStorage.setItem('user', JSON.stringify(userData));
+      setUser(userData);
+    } catch (error) {
+      // Normalizar mensaje de error
+      const message =
+        error.response?.data?.error ||
+        error.response?.data?.message ||
+        'Error al iniciar sesión';
+      throw new Error(message);
+    } finally {
+      setIsLoading(false);
     }
-    return context[type];
-}
+  };
+    
+  const register = async (email, password) => {
+    setIsLoading(true);
+    try {
+      const response = await api.post('/api/auth/register', { email, password });
+      const { token, user: userData } = response.data;
 
-export { AuthContext, AuthProvider, useAuth };
+      // Opcional: dejar al usuario logueado tras registrarse
+      //if (token && userData) {
+      //  localStorage.setItem('access_token', token);
+      //  localStorage.setItem('user', JSON.stringify(userData));
+      //  setUser(userData);
+      //}
+    } catch (error) {
+      const message =
+        error.response?.data?.error ||
+        error.response?.data?.message ||
+        'Error al registrar usuario';
+      throw new Error(message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem('user');
+    localStorage.removeItem('access_token');
+    
+  };
+
+  const value = {
+    user,
+    login,
+    register,
+    logout,
+    isLoading,
+    isAuthenticated: !!user
+  };
+
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
+};

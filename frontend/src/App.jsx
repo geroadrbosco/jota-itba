@@ -1,17 +1,16 @@
 import { Outlet, useLocation } from "react-router-dom"
-import { AuthProvider } from "./contexts/AuthContext"
 import NavBar from "./components/Layout/NavBar"
 import './styles/mainContent.css'
 import { ToastContainer } from "react-toastify"
 import { Footer } from "./components/Layout/Footer"
 
-export const Layout = () => {
+export const App = () => {
   const location = useLocation();
-  const hideNavbarPaths = ['/login', '/register'];
+  
+  const hideNavbarPaths = [];
   const shouldShowNavbar = !hideNavbarPaths.includes(location.pathname);
 
   return (
-    <AuthProvider>
       <div className="App">
         {shouldShowNavbar && <NavBar />}
         <div className="d-flex flex-column">
@@ -33,6 +32,5 @@ export const Layout = () => {
         </div>
         <Footer/>
       </div>
-    </AuthProvider>
   )
 }
