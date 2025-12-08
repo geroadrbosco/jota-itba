@@ -12,6 +12,7 @@ import { ProductsList } from "./pages/ProductsList";
 import { Register } from "./pages/Register";
 import { ProductDetail } from "./pages/ProductDetail";
 import { Profile } from "./pages/profile";
+import { Pedidos } from "./pages/Pedidos";
 
 export const Router = createBrowserRouter([
   {
@@ -31,13 +32,20 @@ export const Router = createBrowserRouter([
       { path: "/login", element: <Login /> },
       { path: "/register", element: <Register /> },
       { path: "*", element: <NotFound /> },
-      { 
-        path: "/profile", 
+      {
+        path: "/profile",
         element: (
-        <ProtectedRoute>
-        <Profile/>
-        </ProtectedRoute>)},
-
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>)
+      },
+      {
+        path: "/pedidos",
+        element: (
+          <ProtectedRoute>
+            <Pedidos />
+          </ProtectedRoute>)
+      },
       {
         path: "admin/crear-producto",
         element: (

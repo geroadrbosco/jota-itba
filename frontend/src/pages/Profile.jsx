@@ -1,3 +1,4 @@
+import { NavLink } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
 export const Profile = () => {
@@ -11,5 +12,13 @@ export const Profile = () => {
         minHeight: '100vh'
     }}>
         <h1> Bienvenido {user?.email} </h1>
-        </div>)
+        <NavLink
+            to="/Pedidos"
+            className={({ isActive }) =>
+                `nav-link bg-white rounded-3 px-3 py-2 ${isActive ? 'active fw-bold' : ''}`
+            }
+        >
+            Mis pedidos
+        </NavLink>
+    </div>)
 }
